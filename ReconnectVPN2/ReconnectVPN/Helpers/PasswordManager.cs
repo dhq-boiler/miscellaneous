@@ -9,7 +9,7 @@ namespace ReconnectVPN.Helpers
 {
     public static class PasswordManager
     {
-        public static void SetPassword(string vpnName, string password, string userName)
+        public static void SetPassword(string vpnName, string userName, string password)
         {
             PasswordVault myVault = new PasswordVault();
             myVault.Add(new PasswordCredential(vpnName, userName, password));
