@@ -2,14 +2,18 @@
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using ReconnectVPN.Helpers;
+using ReconnectVPN.Models;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Net.NetworkInformation;
 using System.Reactive.Disposables;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using YamlDotNet.Serialization;
 
 namespace ReconnectVPN.ViewModels
 {
@@ -18,6 +22,8 @@ namespace ReconnectVPN.ViewModels
         private CompositeDisposable _disposable = new();
         private bool disposedValue;
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
+        private const string CONFIG_YML = "config.yml";
 
         public ReactivePropertySlim<string> Title { get; } = new();
         public ReactivePropertySlim<string> VPNName { get; } = new();
@@ -31,6 +37,7 @@ namespace ReconnectVPN.ViewModels
 
         public MainWindowViewModel()
         {
+            LoadYml();
             Title.Value = "ReconnectVPN";
             PasswordChangedCommand = new ReactiveCommand<RoutedEventArgs>().WithSubscribe(x =>
             {
@@ -61,6 +68,7 @@ namespace ReconnectVPN.ViewModels
                                 if (isReconnected)
                                 {
                                     Console.WriteLine("VPN接続が再接続されました。");
+                                    SaveYml(VPNName.Value, Username.Value);
                                     PasswordManager.SetPassword(VPNName.Value, Username.Value, Password.Value);
                                 }
                                 else
@@ -90,6 +98,42 @@ namespace ReconnectVPN.ViewModels
             })
             .AddTo(_disposable);
             SwitchMonitoringButtonCaption.Value = "Begin Monitoring";
+        }
+
+        private void LoadYml()
+        {
+            if (!File.Exists(CONFIG_YML))
+                return;
+            var vpnConnectionInfo = Deserialize(CONFIG_YML);
+            VPNName.Value = vpnConnectionInfo.Name;
+            Username.Value = vpnConnectionInfo.Username;
+        }
+
+        private static VpnConnectionInfo Deserialize(string yamlPath)
+        {
+            // テキスト抽出
+            var input = new StreamReader(yamlPath, Encoding.UTF8);
+
+            // デシリアライザインスタンス作成
+            var deserializer = new Deserializer();
+
+            // yamlデータのオブジェクトを作成
+            var deserializeObject = deserializer.Deserialize<VpnConnectionInfo>(input);
+
+            return deserializeObject;
+        }
+
+        private void SaveYml(string vpnName, string username)
+        {
+            var obj = new VpnConnectionInfo()
+            {
+                Name = vpnName,
+                Username = username,
+            };
+
+            using TextWriter writer = File.CreateText(CONFIG_YML);
+            var serializer = new Serializer();
+            serializer.Serialize(writer, obj);
         }
 
         static bool CheckVPNConnection(string vpnName)
