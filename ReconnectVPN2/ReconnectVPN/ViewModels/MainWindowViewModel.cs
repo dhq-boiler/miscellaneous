@@ -17,7 +17,7 @@ namespace ReconnectVPN.ViewModels
     {
         private CompositeDisposable _disposable = new();
         private bool disposedValue;
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationTokenSource;
 
         public ReactivePropertySlim<string> Title { get; } = new();
         public ReactivePropertySlim<string> VPNName { get; } = new();
@@ -42,6 +42,7 @@ namespace ReconnectVPN.ViewModels
             {
                 if (IsChecked.Value)
                 {
+                    _cancellationTokenSource = new CancellationTokenSource();
                     Task.Factory.StartNew(async () =>
                     {
                         while (true)
