@@ -87,7 +87,11 @@ namespace ReconnectVPN.ViewModels
             CallWindowsHelloCommand = new ReactiveCommand().WithSubscribe(async () =>
             {
                 var passwordBox = App.Current.MainWindow.FindName("passwordBox") as PasswordBox;
-                passwordBox.Password = await PasswordManager.SignInAsync(VPNName.Value, Username.Value);
+                var temp = await PasswordManager.SignInAsync(VPNName.Value, Username.Value);
+                if (!string.IsNullOrEmpty(temp))
+                {
+                    passwordBox.Password = temp;
+                }
             })
             .AddTo(_disposable);
             SwitchMonitoringButtonCaption.Value = "Begin Monitoring";
