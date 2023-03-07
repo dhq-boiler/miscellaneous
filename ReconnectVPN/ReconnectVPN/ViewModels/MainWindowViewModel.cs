@@ -28,7 +28,7 @@ namespace ReconnectVPN.ViewModels
         public ReactivePropertySlim<bool> IsChecked { get; } = new();
         public ReactiveCommand<RoutedEventArgs> PasswordChangedCommand { get; }
         public ReactiveCommand SwitchMonitoringCommand { get; }
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        private CancellationTokenSource _cancellationTokenSource;
 
         public MainWindowViewModel()
         {
@@ -43,6 +43,7 @@ namespace ReconnectVPN.ViewModels
             {
                 if (IsChecked.Value)
                 {
+                    _cancellationTokenSource = new CancellationTokenSource();
                     Task.Factory.StartNew(async () =>
                     {
                         while (true)
