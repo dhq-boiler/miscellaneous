@@ -46,13 +46,21 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Password</Label>
-                <PasswordBox x:Name="passwordBox">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="PasswordChanged">
-                            <helpers:EventToCommand Command="{Binding PasswordChangedCommand}" PassEventArgsToCommand="True" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                </PasswordBox>
+                <DockPanel>
+                    <Button Command="{Binding CallWindowsHelloCommand}" DockPanel.Dock="Right">
+                        <Image
+                            Width="25"
+                            Height="25"
+                            Source="pack://application:,,,/Assets/windows_hello_icon.png" />
+                    </Button>
+                    <PasswordBox x:Name="passwordBox">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="PasswordChanged">
+                                <helpers:EventToCommand Command="{Binding PasswordChangedCommand}" PassEventArgsToCommand="True" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </PasswordBox>
+                </DockPanel>
             </StackPanel>
         </StackPanel>
     </DockPanel>

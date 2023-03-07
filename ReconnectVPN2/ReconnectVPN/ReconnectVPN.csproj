@@ -2,14 +2,24 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.22000.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+	<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\windows_hello_icon.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
     <PackageReference Include="Prism.Unity" Version="8.1.97" />
     <PackageReference Include="ReactiveProperty.WPF" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\windows_hello_icon.png" />
   </ItemGroup>
 
 </Project>

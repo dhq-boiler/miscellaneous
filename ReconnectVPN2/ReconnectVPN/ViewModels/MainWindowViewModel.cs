@@ -1,13 +1,11 @@
 ﻿using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using ReconnectVPN.Helpers;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Net.NetworkInformation;
 using System.Reactive.Disposables;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -19,6 +17,7 @@ namespace ReconnectVPN.ViewModels
     {
         private CompositeDisposable _disposable = new();
         private bool disposedValue;
+        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         public ReactivePropertySlim<string> Title { get; } = new();
         public ReactivePropertySlim<string> VPNName { get; } = new();
@@ -28,7 +27,7 @@ namespace ReconnectVPN.ViewModels
         public ReactivePropertySlim<bool> IsChecked { get; } = new();
         public ReactiveCommand<RoutedEventArgs> PasswordChangedCommand { get; }
         public ReactiveCommand SwitchMonitoringCommand { get; }
-        private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+        public ReactiveCommand CallWindowsHelloCommand { get; }
 
         public MainWindowViewModel()
         {
@@ -62,6 +61,7 @@ namespace ReconnectVPN.ViewModels
                                 if (isReconnected)
                                 {
                                     Console.WriteLine("VPN接続が再接続されました。");
+                                    PasswordManager.SetPassword(VPNName.Value, Username.Value, Password.Value);
                                 }
                                 else
                                 {
@@ -81,6 +81,12 @@ namespace ReconnectVPN.ViewModels
                     _cancellationTokenSource.Cancel();
                     SwitchMonitoringButtonCaption.Value = "Begin Monitoring";
                 }
+            })
+            .AddTo(_disposable);
+            CallWindowsHelloCommand = new ReactiveCommand().WithSubscribe(async () =>
+            {
+                var passwordBox = App.Current.MainWindow.FindName("passwordBox") as PasswordBox;
+                passwordBox.Password = await PasswordManager.SignInAsync(VPNName.Value, Username.Value);
             })
             .AddTo(_disposable);
             SwitchMonitoringButtonCaption.Value = "Begin Monitoring";
@@ -130,10 +136,21 @@ namespace ReconnectVPN.ViewModels
                 if (disposing)
                 {
                     // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                    _disposable.Dispose();
+                    Title.Dispose();
+                    VPNName.Dispose();
+                    Username.Dispose();
+                    Password.Dispose();
+                    SwitchMonitoringButtonCaption.Dispose();
+                    IsChecked.Dispose();
+                    PasswordChangedCommand.Dispose();
+                    SwitchMonitoringCommand.Dispose();
+                    CallWindowsHelloCommand.Dispose();
                 }
 
                 // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
                 // TODO: 大きなフィールドを null に設定します
+                _disposable = null;
                 disposedValue = true;
             }
         }
