@@ -36,6 +36,10 @@ namespace ReconnectVPN.Helpers
                 var credentials = vault.Retrieve(vpnName, userName);
                 return credentials?.Password;
             }
+            catch (ArgumentException)
+            {
+                return null;
+            }
             catch (COMException)
             {
                 return null;
