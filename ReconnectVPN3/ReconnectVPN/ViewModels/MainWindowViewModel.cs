@@ -209,6 +209,9 @@ namespace ReconnectVPN.ViewModels
                     Password.Dispose();
                     SwitchMonitoringButtonCaption.Dispose();
                     IsChecked.Dispose();
+                    IsReadOnly.Dispose();
+                    IsEnabled.Dispose();
+                    LoadedCommand.Dispose();
                     PasswordChangedCommand.Dispose();
                     SwitchMonitoringCommand.Dispose();
                     CallWindowsHelloCommand.Dispose();
