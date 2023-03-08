@@ -4,6 +4,7 @@ using Reactive.Bindings.Extensions;
 using Reactive.Bindings.TinyLinq;
 using ReconnectVPN.Helpers;
 using ReconnectVPN.Models;
+using ReconnectVPN.Views;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -34,6 +35,7 @@ namespace ReconnectVPN.ViewModels
         public ReactivePropertySlim<bool> IsChecked { get; } = new();
         public ReactivePropertySlim<bool> IsReadOnly { get; } = new();
         public ReadOnlyReactivePropertySlim<bool> IsEnabled { get; }
+        public ReactiveCommand<RoutedEventArgs> LoadedCommand { get; }
         public ReactiveCommand<RoutedEventArgs> PasswordChangedCommand { get; }
         public ReactiveCommand SwitchMonitoringCommand { get; }
         public ReactiveCommand CallWindowsHelloCommand { get; }
@@ -42,6 +44,19 @@ namespace ReconnectVPN.ViewModels
         {
             LoadYml();
             Title.Value = "ReconnectVPN";
+            LoadedCommand = new ReactiveCommand<RoutedEventArgs>().WithSubscribe(args =>
+            {
+                var window = args.Source as MainWindow;
+                double screenWidth = SystemParameters.PrimaryScreenWidth;
+                double screenHeight = SystemParameters.PrimaryScreenHeight;
+                double windowWidth = window.Width;
+                double windowHeight = window.Height;
+                double workAreaHeight = SystemParameters.WorkArea.Height;
+                double taskBarHeight = screenHeight - workAreaHeight;
+                window.Left = screenWidth - windowWidth;
+                window.Top = screenHeight - windowHeight - taskBarHeight;
+            })
+            .AddTo(_disposable);
             PasswordChangedCommand = new ReactiveCommand<RoutedEventArgs>().WithSubscribe(x =>
             {
                 var passwordBox = App.Current.MainWindow.FindName("passwordBox") as PasswordBox;

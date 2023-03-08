@@ -8,9 +8,15 @@
     xmlns:local="clr-namespace:ReconnectVPN"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{Binding Title.Value}"
-    Width="800"
-    Height="450"
+    SizeToContent="WidthAndHeight"
+    xmlns:prism="http://prismlibrary.com/"
+    prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <helpers:EventToCommand Command="{Binding LoadedCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <DockPanel>
         <StackPanel DockPanel.Dock="Bottom">
             <StackPanel
