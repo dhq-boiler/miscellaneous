@@ -26,6 +26,7 @@
                 <ToggleButton
                     Padding="10"
                     Command="{Binding SwitchMonitoringCommand}"
+                    d:Content="Begin Monitoring"
                     Content="{Binding SwitchMonitoringButtonCaption.Value}"
                     IsChecked="{Binding IsChecked.Value}" />
             </StackPanel>
