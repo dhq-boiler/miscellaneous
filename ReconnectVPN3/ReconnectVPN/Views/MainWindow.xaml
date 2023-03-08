@@ -54,12 +54,13 @@
                 <Label>Password</Label>
                 <DockPanel>
                     <Button
+                        Padding="5"
                         Command="{Binding CallWindowsHelloCommand}"
                         DockPanel.Dock="Right"
                         IsEnabled="{Binding IsEnabled.Value}">
-                        <Image
-                            Width="25"
-                            Height="25"
+                        <Image                           
+                            Width="15"
+                            Height="15"
                             Source="pack://application:,,,/Assets/windows_hello_icon.png" />
                     </Button>
                     <PasswordBox x:Name="passwordBox" IsEnabled="{Binding IsEnabled.Value}">
