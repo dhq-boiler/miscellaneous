@@ -1,6 +1,7 @@
 ﻿using Prism.Mvvm;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.TinyLinq;
 using ReconnectVPN.Helpers;
 using ReconnectVPN.Models;
 using System;
@@ -31,6 +32,8 @@ namespace ReconnectVPN.ViewModels
         private ReactivePropertySlim<string> Password { get; } = new();
         public ReactivePropertySlim<string> SwitchMonitoringButtonCaption { get; } = new();
         public ReactivePropertySlim<bool> IsChecked { get; } = new();
+        public ReactivePropertySlim<bool> IsReadOnly { get; } = new();
+        public ReadOnlyReactivePropertySlim<bool> IsEnabled { get; }
         public ReactiveCommand<RoutedEventArgs> PasswordChangedCommand { get; }
         public ReactiveCommand SwitchMonitoringCommand { get; }
         public ReactiveCommand CallWindowsHelloCommand { get; }
@@ -49,6 +52,7 @@ namespace ReconnectVPN.ViewModels
             {
                 if (IsChecked.Value)
                 {
+                    IsReadOnly.Value = true;
                     Task.Factory.StartNew(async () =>
                     {
                         while (true)
@@ -80,6 +84,8 @@ namespace ReconnectVPN.ViewModels
                             //5秒間隔で動作
                             await Task.Delay(5000);
                         }
+                        IsReadOnly.Value = false;
+
                     }, _cancellationTokenSource.Token);
 
                     SwitchMonitoringButtonCaption.Value = "End Monitoring";
@@ -97,6 +103,7 @@ namespace ReconnectVPN.ViewModels
                 passwordBox.Password = await PasswordManager.SignInAsync(VPNName.Value, Username.Value);
             })
             .AddTo(_disposable);
+            IsEnabled = IsReadOnly.Select(x => !x).ToReadOnlyReactivePropertySlim();
             SwitchMonitoringButtonCaption.Value = "Begin Monitoring";
         }
 

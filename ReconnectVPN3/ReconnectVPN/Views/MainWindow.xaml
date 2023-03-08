@@ -38,22 +38,25 @@
             </StackPanel.Resources>
             <StackPanel Orientation="Horizontal">
                 <Label>VPN Name</Label>
-                <TextBox Text="{Binding VPNName.Value, Mode=TwoWay}" />
+                <TextBox IsReadOnly="{Binding IsReadOnly.Value}" Text="{Binding VPNName.Value, Mode=TwoWay}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Username</Label>
-                <TextBox Text="{Binding Username.Value, Mode=TwoWay}" />
+                <TextBox IsReadOnly="{Binding IsReadOnly.Value}" Text="{Binding Username.Value, Mode=TwoWay}" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label>Password</Label>
                 <DockPanel>
-                    <Button Command="{Binding CallWindowsHelloCommand}" DockPanel.Dock="Right">
+                    <Button
+                        Command="{Binding CallWindowsHelloCommand}"
+                        DockPanel.Dock="Right"
+                        IsEnabled="{Binding IsEnabled.Value}">
                         <Image
                             Width="25"
                             Height="25"
                             Source="pack://application:,,,/Assets/windows_hello_icon.png" />
                     </Button>
-                    <PasswordBox x:Name="passwordBox">
+                    <PasswordBox x:Name="passwordBox" IsEnabled="{Binding IsEnabled.Value}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="PasswordChanged">
                                 <helpers:EventToCommand Command="{Binding PasswordChangedCommand}" PassEventArgsToCommand="True" />
